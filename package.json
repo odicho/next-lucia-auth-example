@@ -1,25 +1,29 @@
 {
-  "name": "next-lucia-auth-example",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "react": "^18",
-    "react-dom": "^18",
-    "next": "14.0.4"
-  },
-  "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.0.1",
-    "postcss": "^8",
-    "tailwindcss": "^3.3.0"
-  }
+	"name": "next-lucia-auth-example",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "bunx @biomejs/biome lint .",
+		"lint:fix": "bunx @biomejs/biome lint --apply .",
+		"format": "bunx @biomejs/biome format .",
+		"format:fix": "bunx @biomejs/biome format --write ."
+	},
+	"dependencies": {
+		"react": "^18",
+		"react-dom": "^18",
+		"next": "14.0.4"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.4.1",
+		"@types/node": "^20",
+		"@types/react": "^18",
+		"@types/react-dom": "^18",
+		"autoprefixer": "^10.0.1",
+		"postcss": "^8",
+		"tailwindcss": "^3.3.0",
+		"typescript": "^5"
+	}
 }
