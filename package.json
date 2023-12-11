@@ -1,34 +1,37 @@
 {
-	"name": "next-lucia-auth-example",
-	"version": "0.1.0",
-	"private": true,
-	"scripts": {
-		"dev": "next dev",
-		"build": "next build",
-		"start": "next start",
-		"lint": "bunx @biomejs/biome lint ./src",
-		"lint:fix": "bunx @biomejs/biome lint --apply ./src",
-		"format": "bunx @biomejs/biome format ./src",
-		"format:fix": "bunx @biomejs/biome format --write ./src",
-		"migrate:generate": "drizzle-kit generate:mysql",
-		"migrate:run": "bun run ./src/db/migrate.ts"
-	},
-	"dependencies": {
-		"drizzle-orm": "^0.29.1",
-		"mysql2": "^3.6.5",
-		"next": "14.0.4",
-		"react": "^18",
-		"react-dom": "^18"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "1.4.1",
-		"@types/node": "^20",
-		"@types/react": "^18",
-		"@types/react-dom": "^18",
-		"autoprefixer": "^10.0.1",
-		"drizzle-kit": "^0.20.6",
-		"postcss": "^8",
-		"tailwindcss": "^3.3.0",
-		"typescript": "^5"
-	}
+  "name": "next-lucia-auth-example",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "bunx @biomejs/biome lint ./src",
+    "lint:fix": "bunx @biomejs/biome lint --apply ./src",
+    "format": "bunx @biomejs/biome format ./src",
+    "format:fix": "bunx @biomejs/biome format --write ./src",
+    "migrate:generate": "drizzle-kit generate:mysql",
+    "migrate:run": "bun run ./src/db/migrate.ts"
+  },
+  "dependencies": {
+    "@lucia-auth/adapter-mysql": "^2.1.0",
+    "@lucia-auth/oauth": "^3.5.0",
+    "drizzle-orm": "^0.29.1",
+    "lucia": "^2.7.4",
+    "mysql2": "^3.6.5",
+    "next": "14.0.4",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.4.1",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "drizzle-kit": "^0.20.6",
+    "postcss": "^8",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
+  }
 }

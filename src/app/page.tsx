@@ -1,5 +1,21 @@
-import Image from 'next/image';
+import { getPageSession } from '@/auth/lucia';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
-	return <div>Tizi</div>;
-}
+import Form from '@/components/form'; // expect error - see next section
+
+const Page = async () => {
+	const session = await getPageSession();
+	if (!session) redirect('/login');
+	return (
+		<>
+			<h1>Profile</h1>
+			<p>User id: {session.user.userId}</p>
+			<p>Username: {session.user.username}</p>
+			<Form action="/api/logout">
+				<input type="submit" value="Sign out" />
+			</Form>
+		</>
+	);
+};
+
+export default Page;
