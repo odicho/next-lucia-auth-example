@@ -2,16 +2,11 @@ import { poolConnection } from '@/db';
 import { mysql2 } from '@lucia-auth/adapter-mysql';
 import { lucia } from 'lucia';
 import { nextjs_future } from 'lucia/middleware';
-import { Lucia } from '../../app';
 import { github } from '@lucia-auth/oauth/providers';
 import { cache } from 'react';
 import * as context from 'next/headers';
 
 const env = process.env.NODE_ENV === 'production' ? 'PROD' : 'DEV';
-
-type UserSchema = {
-	id: string;
-} & Lucia.DatabaseUserAttributes;
 
 export const auth = lucia({
 	env,
@@ -24,7 +19,7 @@ export const auth = lucia({
 	sessionCookie: {
 		expires: false,
 	},
-	getUserAttributes: (databaseUser: UserSchema) => {
+	getUserAttributes: (databaseUser) => {
 		return {
 			username: databaseUser.username,
 		};
