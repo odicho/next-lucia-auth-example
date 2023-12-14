@@ -1,43 +1,37 @@
-import { mysqlTable, bigint, varchar } from 'drizzle-orm/mysql-core';
+import { mysqlTable, varchar, datetime, primaryKey } from 'drizzle-orm/mysql-core';
 
-export const user = mysqlTable('auth_user', {
+export const user = mysqlTable('user', {
 	id: varchar('id', {
-		length: 15, // change this when using custom user ids
+		length: 255,
 	}).primaryKey(),
-	username: varchar('username', { length: 31 }).notNull().unique(),
+	username: varchar('username', { length: 255 }),
+});
+
+export const oauth_account = mysqlTable(
+	'oauth_account',
+	{
+		providerId: varchar('provider_id', { length: 255 }).notNull(),
+		providerUserId: varchar('provider_user_id', { length: 255 }).notNull(),
+		userId: varchar('user_id', { length: 255 })
+			.notNull()
+			.references(() => user.id),
+	},
+	(table) => ({
+		pk: primaryKey({ columns: [table.providerId, table.providerUserId] }),
+	}),
+);
+
+export const session = mysqlTable('session', {
+	id: varchar('id', {
+		length: 255,
+	}).primaryKey(),
+	userId: varchar('user_id', {
+		length: 255,
+	})
+		.notNull()
+		.references(() => user.id),
+	expiresAt: datetime('expires_at').notNull(),
 });
 
 export type User = typeof user.$inferSelect;
-
-export const key = mysqlTable('user_key', {
-	id: varchar('id', {
-		length: 255,
-	}).primaryKey(),
-	userId: varchar('user_id', {
-		length: 15,
-	})
-		.notNull()
-		.references(() => user.id),
-	hashedPassword: varchar('hashed_password', {
-		length: 255,
-	}),
-});
-
-export const session = mysqlTable('user_session', {
-	id: varchar('id', {
-		length: 128,
-	}).primaryKey(),
-	userId: varchar('user_id', {
-		length: 15,
-	})
-		.notNull()
-		.references(() => user.id),
-	activeExpires: bigint('active_expires', {
-		mode: 'number',
-	}).notNull(),
-	idleExpires: bigint('idle_expires', {
-		mode: 'number',
-	}).notNull(),
-});
-
 export type Session = typeof session.$inferSelect;

@@ -1,39 +1,55 @@
-import { poolConnection } from '@/db';
-import { mysql2 } from '@lucia-auth/adapter-mysql';
-import { lucia } from 'lucia';
-import { nextjs_future } from 'lucia/middleware';
-import { github } from '@lucia-auth/oauth/providers';
+import { Lucia } from 'lucia';
+import { GitHub } from 'arctic';
+import { drizzleAdapter } from '@/db';
+import { cookies } from 'next/headers';
 import { cache } from 'react';
-import * as context from 'next/headers';
 
-const env = process.env.NODE_ENV === 'production' ? 'PROD' : 'DEV';
-
-export const auth = lucia({
-	env,
-	adapter: mysql2(poolConnection, {
-		user: 'auth_user',
-		key: 'user_key',
-		session: 'user_session',
-	}),
-	middleware: nextjs_future(),
-	sessionCookie: {
-		expires: false,
+export const lucia = new Lucia(drizzleAdapter, {
+	getSessionAttributes: (attributes) => {
+		return {};
 	},
-	getUserAttributes: (databaseUser) => {
+	getUserAttributes: (attributes) => {
 		return {
-			username: databaseUser.username,
+			username: attributes.username,
 		};
 	},
+	sessionCookie: {
+		attributes: {
+			secure: process.env.NODE_ENV === 'production',
+		},
+	},
 });
 
-export const githubAuth = github(auth, {
-	clientId: process.env.GITHUB_CLIENT_ID ?? '',
-	clientSecret: process.env.GITHUB_CLIENT_SECRET ?? '',
-});
+declare module 'lucia' {
+	interface Register {
+		Lucia: typeof lucia;
+	}
+	// interface DatabaseSessionAttributes {}
+	interface DatabaseUserAttributes {
+		username: string;
+	}
+}
 
-export type Auth = typeof auth;
+export const githubAuth = new GitHub(
+	process.env.GITHUB_CLIENT_ID ?? '',
+	process.env.GITHUB_CLIENT_SECRET ?? '',
+);
 
-export const getPageSession = cache(() => {
-	const authRequest = auth.handleRequest('GET', context);
-	return authRequest.validate();
+export const getUser = cache(async () => {
+	const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
+	if (!sessionId) return null;
+	const { session, user } = await lucia.validateSession(sessionId);
+	try {
+		if (session?.fresh) {
+			const sessionCookie = lucia.createSessionCookie(session.id);
+			cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+		}
+		if (!session) {
+			const sessionCookie = lucia.createBlankSessionCookie();
+			cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+		}
+	} catch {
+		// Next.js throws error when attempting to set cookies when rendering page
+	}
+	return user;
 });

@@ -1,25 +1,43 @@
-import { auth } from '@/auth/lucia';
-import * as context from 'next/headers';
+import { getUser, lucia } from '@/auth/lucia';
+import { verifyRequestOrigin } from 'lucia';
+import { headers } from 'next/headers';
 
 import type { NextRequest } from 'next/server';
 
 export const POST = async (request: NextRequest) => {
-	const authRequest = auth.handleRequest(request.method, context);
-	// check if user is authenticated
-	const session = await authRequest.validate();
-	if (!session) {
+	const originHeader = headers().get('Origin');
+	const hostHeader = headers().get('Host');
+
+	if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
+		return new Response(null, {
+			status: 403,
+		});
+	}
+
+	const sessionId = request.cookies.get(lucia.sessionCookieName)?.value ?? null;
+
+	if (!sessionId) {
 		return new Response(null, {
 			status: 401,
 		});
 	}
-	// make sure to invalidate the current session!
-	await auth.invalidateSession(session.sessionId);
-	// delete session cookie
-	authRequest.setSession(null);
+
+	const { user } = await lucia.validateSession(sessionId);
+
+	if (!user) {
+		return new Response(null, {
+			status: 401,
+		});
+	}
+
+	await lucia.invalidateSession(sessionId);
+	const blankSessionCookie = lucia.createBlankSessionCookie();
+
 	return new Response(null, {
 		status: 302,
 		headers: {
 			Location: '/login', // redirect to login page
+			'Set-Cookie': blankSessionCookie.serialize(),
 		},
 	});
 };

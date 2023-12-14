@@ -1,11 +1,63 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "f5e3b3c6-60e9-4e08-9de9-e907e32edf42",
+  "id": "aaa98942-42e4-4fd6-aaea-d4d5ca3b3ba8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "user_key": {
-      "name": "user_key",
+    "oauth_account": {
+      "name": "oauth_account",
+      "columns": {
+        "provider_id": {
+          "name": "provider_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider_user_id": {
+          "name": "provider_user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oauth_account_user_id_user_id_fk": {
+          "name": "oauth_account_user_id_user_id_fk",
+          "tableFrom": "oauth_account",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "oauth_account_provider_id_provider_user_id_pk": {
+          "name": "oauth_account_provider_id_provider_user_id_pk",
+          "columns": [
+            "provider_id",
+            "provider_user_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "session": {
+      "name": "session",
       "columns": {
         "id": {
           "name": "id",
@@ -16,13 +68,57 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "varchar(15)",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "hashed_password": {
-          "name": "hashed_password",
+        "expires_at": {
+          "name": "expires_at",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "session_user_id_user_id_fk": {
+          "name": "session_user_id_user_id_fk",
+          "tableFrom": "session",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "session_id": {
+          "name": "session_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "user": {
+      "name": "user",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "username": {
+          "name": "username",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false,
@@ -30,125 +126,16 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "user_key_user_id_auth_user_id_fk": {
-          "name": "user_key_user_id_auth_user_id_fk",
-          "tableFrom": "user_key",
-          "tableTo": "auth_user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "user_key_id": {
-          "name": "user_key_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {}
-    },
-    "user_session": {
-      "name": "user_session",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(128)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "varchar(15)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "active_expires": {
-          "name": "active_expires",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "idle_expires": {
-          "name": "idle_expires",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "user_session_user_id_auth_user_id_fk": {
-          "name": "user_session_user_id_auth_user_id_fk",
-          "tableFrom": "user_session",
-          "tableTo": "auth_user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "user_session_id": {
-          "name": "user_session_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {}
-    },
-    "auth_user": {
-      "name": "auth_user",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(15)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "username": {
-          "name": "username",
-          "type": "varchar(31)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "auth_user_id": {
-          "name": "auth_user_id",
+        "user_id": {
+          "name": "user_id",
           "columns": [
             "id"
           ]
         }
       },
-      "uniqueConstraints": {
-        "auth_user_username_unique": {
-          "name": "auth_user_username_unique",
-          "columns": [
-            "username"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     }
   },
   "schemas": {},
