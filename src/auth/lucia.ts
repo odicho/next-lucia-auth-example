@@ -1,6 +1,6 @@
-import { Lucia } from 'lucia';
-import { GitHub } from 'arctic';
 import { drizzleAdapter } from '@/db';
+import { GitHub } from 'arctic';
+import { Lucia } from 'lucia';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
 

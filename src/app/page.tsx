@@ -1,8 +1,8 @@
 // import { getPageSession } from '@/auth/lucia';
 import { redirect } from 'next/navigation';
 
-import Form from '@/components/form'; // expect error - see next section
 import { getUser } from '@/auth/lucia';
+import Form from '@/components/form'; // expect error - see next section
 
 const Page = async () => {
 	const user = await getUser();

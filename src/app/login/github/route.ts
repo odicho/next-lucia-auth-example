@@ -1,11 +1,8 @@
 import { githubAuth } from '@/auth/lucia';
+import { generateState } from 'arctic';
 import * as context from 'next/headers';
 
-import type { NextRequest } from 'next/server';
-
-import { generateState, generateCodeVerifier } from 'arctic';
-
-export const GET = async (request: NextRequest) => {
+export const GET = async () => {
 	const state = generateState();
 
 	const authorizationURL = await githubAuth.createAuthorizationURL(state);
